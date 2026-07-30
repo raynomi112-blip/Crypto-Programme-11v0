@@ -1,2 +1,2 @@
-textstreamlit
+streamlit
 plotly
