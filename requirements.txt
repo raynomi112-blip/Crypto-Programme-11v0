@@ -1,0 +1,4 @@
+textstreamlit
+plotly
+textblob
+requests
