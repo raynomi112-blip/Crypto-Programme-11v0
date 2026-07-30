@@ -70,8 +70,6 @@ master_quantum_simulation = """
                 <span class="glow-green" style="font-size: 15px; letter-spacing:1px;">WAQAR ZAKA STUDENT</span><br>
                 <span style="color:#ffffff; font-size: 11px;">OFFICIAL SECURE NODE INFRASTRUCTURE #993</span>
             </div>
-            
-            <!-- Right Terminal Target Metrics (Updated for 4H Chart TP / SL via Channels) -->
             <div class="panel right-matrix">
                 <div class="glow-cyan" style="font-size: 14px; letter-spacing: 1px; margin-bottom: 12px;">🤖 INFLUENCER & CHANNEL MATRIX (4H)</div>
                 <table style="width:100%; font-size:12px; border-collapse: collapse;">
@@ -149,3 +147,5 @@ master_quantum_simulation = """
             ctx.fillRect(marginX - 22, 40, 22, canvas.height - 110); ctx.strokeRect(marginX - 22, 40, 22, canvas.height - 110);
             ctx.fillRect(targetWidthX, 40, 22, canvas.height - 110); ctx.strokeRect(targetWidthX, 40, 22, canvas.height - 110);
             for(let i = 0; i < fibers.length; i++) {
+                let f = fibers[i]; let fluidVibe = Math.sin(systemClock * f.velocity * 12 + f.frequencySeed) * 1.3; let activeY = f.y + fluidVibe;
+                if (!f.isBroken) {
