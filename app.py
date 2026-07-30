@@ -1,8 +1,9 @@
-import time
+import streamlit as st
 import requests
-import numpy as np
 import plotly.graph_objects as go
-from textblob import TextBlob
+
+# --- STREAMLIT CONFIGURATION FOR MOBILE PHONES ---
+st.set_page_config(page_title="Crypto Glass Intelligence", layout="centered")
 
 # --- STEP 1: AUTOMATED DATA FETCHING ENGINE ---
 def fetch_live_market_data():
