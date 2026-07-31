@@ -35,7 +35,7 @@ def fetch_elite_market_intelligence():
     except:
         pass
 
-    # Safe fallback parsing logic utilizing single element extraction
+    # FIXED: Explicit item indexing safely extracts string objects
     usa_headline = scraped_stories[0] if len(scraped_stories) > 0 else "US Federal Senate reviews market structure regulations for digital assets."
     war_headline = scraped_stories[1] if len(scraped_stories) > 1 else "Global banks test tokenized liquidity tools for cross-border asset settlement."
     ai_headline = scraped_stories[2] if len(scraped_stories) > 2 else "Institutional trading dominance hits record highs as algorithmic flows flatten retail volatility."
