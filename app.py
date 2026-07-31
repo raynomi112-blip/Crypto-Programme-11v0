@@ -63,8 +63,8 @@ js_war = json.dumps(war_news)
 js_ai = json.dumps(ai_news)
 
 # --- 3. CINEMATIC INTERACTIVE HTML5 COMPOSITION LAYER ---
-# Completely separate Python strings from JavaScript literals to prevent f-string bracket syntax errors
-html_header = """
+# Using a solid template string with absolute protection against Python string interpolation issues.
+html_template = """
 <!DOCTYPE html><html><head><style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body, html { width:100%; height:100%; background:#000; overflow:hidden; font-family:monospace; color:#fff; }
@@ -85,16 +85,16 @@ canvas { display:block; width:100vw; height:100vh; position:absolute; z-index:1;
         <div class="side-container">
             <div class="panel" style="border-left:5px solid #27ae60;">
                 <div style="font-size:11px; color:#7f8c8d; margin-bottom:8px;">📡 GLOBAL REAL-TIME DATA INDEX</div>
-                <b>⚡ 1. GLOBAL USA NEWS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(up) + """% Long | 🔴 """ + str(un) + """% Short</span><br><br>
-                <b>⚔️ 2. WAR & GEOPOLITICS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(wp) + """% Long | 🔴 """ + str(wn) + """% Short</span><br><br>
-                <b>🧠 3. AI ANALYSIS & LEADERS (50%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(ap) + """% Long | 🔴 """ + str(an) + """% Short</span>
+                <b>⚡ 1. GLOBAL USA NEWS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 [UP_VAL]% Long | 🔴 [UN_VAL]% Short</span><br><br>
+                <b>⚔️ 2. WAR & GEOPOLITICS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 [WP_VAL]% Long | 🔴 [WN_VAL]% Short</span><br><br>
+                <b>🧠 3. AI ANALYSIS & LEADERS (50%)</b><br><span style="font-size:12px; color:#aaa;">🟢 [AP_VAL]% Long | 🔴 [AN_VAL]% Short</span>
             </div>
             
             <!-- Dynamic Hyper-AI Long/Short Signal Box -->
             <div class="panel" style="border: 2px solid #f1c40f;">
                 <span style="color:#7f8c8d; font-size:10px;">🔮 HYPER-AI AUTOMATED EXECUTION RECOMMENDATION:</span><br>
-                <span class="glow-y" style="font-size:20px; letter-spacing:0.5px;">""" + str(decision) + """</span><br>
-                <span style="color:#fff; font-size:12px;">Unified Sentiment Weight Match: </span><span class="glow-g">""" + str(conf) + """%</span>
+                <span class="glow-y" style="font-size:20px; letter-spacing:0.5px;">[DECISION_VAL]</span><br>
+                <span style="color:#fff; font-size:12px;">Unified Sentiment Weight Match: </span><span class="glow-g">[CONF_VAL]%</span>
             </div>
         </div>
 
@@ -109,16 +109,16 @@ canvas { display:block; width:100vw; height:100vh; position:absolute; z-index:1;
         <div class="side-container">
             <div class="panel" style="border-top:5px solid #00f2fe; border-color:#00f2fe;">
                 <div class="glow-c" style="font-size:13px; margin-bottom:10px;">🤖 EXCHANGE CORE MATRIX (LIVE)</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>LIVE BITCOIN PRICE:</span><span class="glow-c">$""" + f"{btc:,}" + """ USD</span></div>
-                <div style="display:flex; justify-content:space-between; color:#f1c40f;"><span>⚡ ACCEL BREAKOUT AREA:</span><span style="color:#f1c40f; font-weight:bold;">""" + f"{brk:,}" + """</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>LIVE BITCOIN PRICE:</span><span class="glow-c">$[BTC_VAL] USD</span></div>
+                <div style="display:flex; justify-content:space-between; color:#f1c40f;"><span>⚡ ACCEL BREAKOUT AREA:</span><span style="color:#f1c40f; font-weight:bold;">[BRK_VAL]</span></div>
             </div>
             
             <!-- 1-HOUR HIGH-END SEPARATED NEWS ARCHIVE DISPATCH -->
             <div class="panel" style="border-left:4px solid #00f2fe; background:rgba(8,8,12,0.95); font-size:11px; line-height:1.5;">
                 <span class="glow-c">📰 1-HOUR REAL INTERNET NEWS DISPATCH</span><br><br>
-                <span style="color:#f1c40f; font-weight:bold;">[USA REGULATORY]</span><br><span style="color:#ccc;">""" + str(usa_news) + """</span><br><br>
-                <span style="color:#e74c3c; font-weight:bold;">[WAR & TRADING]</span><br><span style="color:#ccc;">""" + str(war_news) + """</span><br><br>
-                <span style="color:#2ecc71; font-weight:bold;">[INFLUENCERS & CHARTS]</span><br><span style="color:#ccc;">""" + str(ai_news) + """</span>
+                <span style="color:#f1c40f; font-weight:bold;">[USA REGULATORY]</span><br><span style="color:#ccc;">[USA_NEWS_VAL]</span><br><br>
+                <span style="color:#e74c3c; font-weight:bold;">[WAR & TRADING]</span><br><span style="color:#ccc;">[WAR_NEWS_VAL]</span><br><br>
+                <span style="color:#2ecc71; font-weight:bold;">[INFLUENCERS & CHARTS]</span><br><span style="color:#ccc;">[AI_NEWS_VAL]</span>
             </div>
         </div>
     </div>
@@ -140,14 +140,19 @@ window.addEventListener('resize', resize); resize();
 const fibers = [], mx = 435;
 const fCount = 90;
 
-const usaText = """ + js_usa + """;
-const warText = """ + js_war + """;
-const aiText = """ + js_ai + """;
+const usaText = [JS_USA_VAL];
+const warText = [JS_WAR_VAL];
+const aiText = [JS_AI_VAL];
 
-const usaNegPct = """ + f'"{un}%"' + """;
-const warNegPct = """ + f'"{wn}%"' + """;
-const aiNegPct = """ + f'"{an}%"' + """;
+const usaNegPct = "[UN_VAL]%";
+const warNegPct = "[WN_VAL]%";
+const aiNegPct = "[AN_VAL]%";
 
 for(let i=0; i<fCount; i++) {
-    let r = i/fCount, y = 140 + r*(canvas.height-340), cat = 1, fac = """ + str(up/100) + """, reason = usaText, dmg = usaNegPct, secName = "USA FEDERAL NEWS";
-    if(r>0.25 && r<=0.5) { cat=2; fac=""" + str(wp/100) + """; reason = warText; dmg = warNegPct; secName = "WAR & GEOPOLITICS"; }
+    let r = i/fCount, y = 140 + r*(canvas.height-340), cat = 1, fac = [UP_PCT_VAL], reason = usaText, dmg = usaNegPct, secName = "USA FEDERAL NEWS";
+    if(r>0.25 && r<=0.5) { cat=2; fac=[WP_PCT_VAL]; reason = warText; dmg = warNegPct; secName = "WAR & GEOPOLITICS"; } 
+    else if(r>0.5) { cat=3; fac=[AP_PCT_VAL]; reason = aiText; dmg = aiNegPct; secName = "AI LEADER ANALYTICS"; }
+    
+    fibers.push({
+        y: y, cat: cat, broken: Math.random() > fac, seed: Math.random()*100, 
+        v: 0.006+Math.random()*0.012, sx: 0.35+Math.random()*0.3, g: 22+Math.random()*35,
