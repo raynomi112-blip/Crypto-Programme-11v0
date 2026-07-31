@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import xml.etree.ElementTree as ET
+import json
 
 # --- 1. FULL MOBILE SCREEN LAYOUT CONFIGURATION ---
 st.set_page_config(page_title="Waqar Zaka Quantum Core Live", layout="wide", initial_sidebar_state="collapsed")
@@ -29,13 +30,12 @@ def fetch_elite_market_intelligence():
             title_node = item.find('title')
             if title_node is not None and title_node.text:
                 title = title_node.text
-                # Escape characters that break JavaScript strings
-                cleaned_title = title.replace('"', '\\"').replace("'", "\\'").replace('\n', ' ').strip()
+                cleaned_title = title.replace('\n', ' ').strip()
                 scraped_stories.append(cleaned_title)
     except:
         pass
 
-    # CRITICAL BUG FIX: Extract items using indexes rather than assigning the whole list object
+    # Safe fallback parsing logic utilizing single element extraction
     usa_headline = scraped_stories[0] if len(scraped_stories) > 0 else "US Federal Senate reviews market structure regulations for digital assets."
     war_headline = scraped_stories[1] if len(scraped_stories) > 1 else "Global banks test tokenized liquidity tools for cross-border asset settlement."
     ai_headline = scraped_stories[2] if len(scraped_stories) > 2 else "Institutional trading dominance hits record highs as algorithmic flows flatten retail volatility."
@@ -57,20 +57,26 @@ def fetch_elite_market_intelligence():
 # Execute and unpack live data variables seamlessly
 btc, brk, up, un, wp, wn, ap, an, decision, conf, usa_news, war_news, ai_news = fetch_elite_market_intelligence()
 
+# Use proper serialization to inject variables safely into JS layout
+js_usa = json.dumps(usa_news)
+js_war = json.dumps(war_news)
+js_ai = json.dumps(ai_news)
+
 # --- 3. CINEMATIC INTERACTIVE HTML5 COMPOSITION LAYER ---
-simulation_code = f"""
+# Completely separate Python strings from JavaScript literals to prevent f-string bracket syntax errors
+html_header = """
 <!DOCTYPE html><html><head><style>
-* {{ margin:0; padding:0; box-sizing:border-box; }}
-body, html {{ width:100%; height:100%; background:#000; overflow:hidden; font-family:monospace; color:#fff; }}
-canvas {{ display:block; width:100vw; height:100vh; position:absolute; z-index:1; }}
-.hud {{ position:absolute; z-index:10; width:100%; height:100%; pointer-events:none; padding:25px; display:flex; flex-direction:column; justify-content:space-between; }}
-.panel {{ background:rgba(2,2,5,0.94); border:1px solid #148045; padding:18px; border-radius:6px; pointer-events:auto; box-shadow: 0 0 20px rgba(0,0,0,0.9); }}
-.side-container {{ display:flex; flex-direction:column; gap:15px; width:390px; }}
-.glow-g {{ color:#2ecc71; font-weight:bold; text-shadow:0 0 10px rgba(46,204,113,0.7); }}
-.glow-r {{ color:#e74c3c; font-weight:bold; text-shadow:0 0 10px rgba(231,76,60,0.7); }}
-.glow-c {{ color:#00f2fe; font-weight:bold; text-shadow:0 0 10px rgba(0,242,254,0.7); }}
-.glow-y {{ color:#f1c40f; font-weight:bold; text-shadow:0 0 10px rgba(241,196,15,0.7); }}
-.stamp {{ position:absolute; font-size:11px; letter-spacing:4px; color:rgba(255,255,255,0.2); font-weight:bold; transform:rotate(-90deg); transform-origin:left top; }}
+* { margin:0; padding:0; box-sizing:border-box; }
+body, html { width:100%; height:100%; background:#000; overflow:hidden; font-family:monospace; color:#fff; }
+canvas { display:block; width:100vw; height:100vh; position:absolute; z-index:1; }
+.hud { position:absolute; z-index:10; width:100%; height:100%; pointer-events:none; padding:25px; display:flex; flex-direction:column; justify-content:space-between; }
+.panel { background:rgba(2,2,5,0.94); border:1px solid #148045; padding:18px; border-radius:6px; pointer-events:auto; box-shadow: 0 0 20px rgba(0,0,0,0.9); }
+.side-container { display:flex; flex-direction:column; gap:15px; width:390px; }
+.glow-g { color:#2ecc71; font-weight:bold; text-shadow:0 0 10px rgba(46,204,113,0.7); }
+.glow-r { color:#e74c3c; font-weight:bold; text-shadow:0 0 10px rgba(231,76,60,0.7); }
+.glow-c { color:#00f2fe; font-weight:bold; text-shadow:0 0 10px rgba(0,242,254,0.7); }
+.glow-y { color:#f1c40f; font-weight:bold; text-shadow:0 0 10px rgba(241,196,15,0.7); }
+.stamp { position:absolute; font-size:11px; letter-spacing:4px; color:rgba(255,255,255,0.2); font-weight:bold; transform:rotate(-90deg); transform-origin:left top; }
 </style></head><body>
 <canvas id="c"></canvas>
 <div class="hud">
@@ -79,16 +85,16 @@ canvas {{ display:block; width:100vw; height:100vh; position:absolute; z-index:1
         <div class="side-container">
             <div class="panel" style="border-left:5px solid #27ae60;">
                 <div style="font-size:11px; color:#7f8c8d; margin-bottom:8px;">📡 GLOBAL REAL-TIME DATA INDEX</div>
-                <b>⚡ 1. GLOBAL USA NEWS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 {up}% Long | 🔴 {un}% Short</span><br><br>
-                <b>⚔️ 2. WAR & GEOPOLITICS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 {wp}% Long | 🔴 {wn}% Short</span><br><br>
-                <b>🧠 3. AI ANALYSIS & LEADERS (50%)</b><br><span style="font-size:12px; color:#aaa;">🟢 {ap}% Long | 🔴 {an}% Short</span>
+                <b>⚡ 1. GLOBAL USA NEWS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(up) + """% Long | 🔴 """ + str(un) + """% Short</span><br><br>
+                <b>⚔️ 2. WAR & GEOPOLITICS (25%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(wp) + """% Long | 🔴 """ + str(wn) + """% Short</span><br><br>
+                <b>🧠 3. AI ANALYSIS & LEADERS (50%)</b><br><span style="font-size:12px; color:#aaa;">🟢 """ + str(ap) + """% Long | 🔴 """ + str(an) + """% Short</span>
             </div>
             
             <!-- Dynamic Hyper-AI Long/Short Signal Box -->
             <div class="panel" style="border: 2px solid #f1c40f;">
                 <span style="color:#7f8c8d; font-size:10px;">🔮 HYPER-AI AUTOMATED EXECUTION RECOMMENDATION:</span><br>
-                <span class="glow-y" style="font-size:20px; letter-spacing:0.5px;">{decision}</span><br>
-                <span style="color:#fff; font-size:12px;">Unified Sentiment Weight Match: </span><span class="glow-g">{conf}%</span>
+                <span class="glow-y" style="font-size:20px; letter-spacing:0.5px;">""" + str(decision) + """</span><br>
+                <span style="color:#fff; font-size:12px;">Unified Sentiment Weight Match: </span><span class="glow-g">""" + str(conf) + """%</span>
             </div>
         </div>
 
@@ -103,16 +109,16 @@ canvas {{ display:block; width:100vw; height:100vh; position:absolute; z-index:1
         <div class="side-container">
             <div class="panel" style="border-top:5px solid #00f2fe; border-color:#00f2fe;">
                 <div class="glow-c" style="font-size:13px; margin-bottom:10px;">🤖 EXCHANGE CORE MATRIX (LIVE)</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>LIVE BITCOIN PRICE:</span><span class="glow-c">${btc:,} USD</span></div>
-                <div style="display:flex; justify-content:space-between; color:#f1c40f;"><span>⚡ ACCEL BREAKOUT AREA:</span><span style="color:#f1c40f; font-weight:bold;">{brk:,}</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>LIVE BITCOIN PRICE:</span><span class="glow-c">$""" + f"{btc:,}" + """ USD</span></div>
+                <div style="display:flex; justify-content:space-between; color:#f1c40f;"><span>⚡ ACCEL BREAKOUT AREA:</span><span style="color:#f1c40f; font-weight:bold;">""" + f"{brk:,}" + """</span></div>
             </div>
             
             <!-- 1-HOUR HIGH-END SEPARATED NEWS ARCHIVE DISPATCH -->
             <div class="panel" style="border-left:4px solid #00f2fe; background:rgba(8,8,12,0.95); font-size:11px; line-height:1.5;">
                 <span class="glow-c">📰 1-HOUR REAL INTERNET NEWS DISPATCH</span><br><br>
-                <span style="color:#f1c40f; font-weight:bold;">[USA REGULATORY]</span><br><span style="color:#ccc;">{usa_news}</span><br><br>
-                <span style="color:#e74c3c; font-weight:bold;">[WAR & TRADING]</span><br><span style="color:#ccc;">{war_news}</span><br><br>
-                <span style="color:#2ecc71; font-weight:bold;">[INFLUENCERS & CHARTS]</span><br><span style="color:#ccc;">{ai_news}</span>
+                <span style="color:#f1c40f; font-weight:bold;">[USA REGULATORY]</span><br><span style="color:#ccc;">""" + str(usa_news) + """</span><br><br>
+                <span style="color:#e74c3c; font-weight:bold;">[WAR & TRADING]</span><br><span style="color:#ccc;">""" + str(war_news) + """</span><br><br>
+                <span style="color:#2ecc71; font-weight:bold;">[INFLUENCERS & CHARTS]</span><br><span style="color:#ccc;">""" + str(ai_news) + """</span>
             </div>
         </div>
     </div>
@@ -128,26 +134,20 @@ canvas {{ display:block; width:100vw; height:100vh; position:absolute; z-index:1
 
 <script>
 const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
-function resize() {{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }}
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
-// Data vectors for our interactive hover engine mapping
 const fibers = [], mx = 435;
 const fCount = 90;
 
-const usaText = "{usa_news}", warText = "{war_news}", aiText = "{ai_news}";
-const usaNegPct = "{un}%", warNegPct = "{wn}%", aiNegPct = "{an}%";
+const usaText = """ + js_usa + """;
+const warText = """ + js_war + """;
+const aiText = """ + js_ai + """;
 
-for(let i=0; i<fCount; i++) {{
-    let r = i/fCount, y = 140 + r*(canvas.height-340), cat = 1, fac = {up}/100, reason = usaText, dmg = usaNegPct, secName = "USA FEDERAL NEWS";
-    if(r>0.25 && r<=0.5) {{ cat=2; fac={wp}/100; reason = warText; dmg = warNegPct; secName = "WAR & GEOPOLITICS"; }} 
-    else if(r>0.5) {{ cat=3; fac={ap}/100; reason = aiText; dmg = aiNegPct; secName = "AI LEADER ANALYTICS"; }}
-    
-    fibers.push({{
-        y: y, cat: cat, broken: Math.random() > fac, seed: Math.random()*100, 
-        v: 0.006+Math.random()*0.012, sx: 0.35+Math.random()*0.3, g: 22+Math.random()*35,
-        reason: reason, dmg: dmg, sector: secName
-    }});
-}}
+const usaNegPct = """ + f'"{un}%"' + """;
+const warNegPct = """ + f'"{wn}%"' + """;
+const aiNegPct = """ + f'"{an}%"' + """;
 
-let mouseX = 0, mouseY = 0, hoverText = "", hoverDmg = "", hoverSec = "", showTooltip = false;
+for(let i=0; i<fCount; i++) {
+    let r = i/fCount, y = 140 + r*(canvas.height-340), cat = 1, fac = """ + str(up/100) + """, reason = usaText, dmg = usaNegPct, secName = "USA FEDERAL NEWS";
+    if(r>0.25 && r<=0.5) { cat=2; fac=""" + str(wp/100) + """; reason = warText; dmg = warNegPct; secName = "WAR & GEOPOLITICS"; }
