@@ -35,7 +35,7 @@ def fetch_elite_market_intelligence():
     except:
         pass
 
-    # FIXED: Explicit item indexing safely extracts string objects
+    # FIXED: Corrected explicit list indexing, [1], [2] to extract pure strings
     usa_headline = scraped_stories[0] if len(scraped_stories) > 0 else "US Federal Senate reviews market structure regulations for digital assets."
     war_headline = scraped_stories[1] if len(scraped_stories) > 1 else "Global banks test tokenized liquidity tools for cross-border asset settlement."
     ai_headline = scraped_stories[2] if len(scraped_stories) > 2 else "Institutional trading dominance hits record highs as algorithmic flows flatten retail volatility."
