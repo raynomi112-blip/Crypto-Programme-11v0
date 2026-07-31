@@ -2,16 +2,12 @@ import streamlit as st
 import requests
 import json
 import base64
-from streamlit_autorefresh import st_autorefresh
 
 # --- 1. FULL MOBILE SCREEN LAYOUT CONFIGURATION ---
 st.set_page_config(page_title="Waqar Zaka Quantum Core Live", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("<style>header,footer,div[data-testid='stToolbar']{visibility:hidden!important;}.block-container{padding:0px!important;margin:0px!important;width:100vw!important;max-width:100%!important;}body{background-color:#000;overflow:hidden!important;}iframe{width:100vw!important;height:100vh!important;border:none!important;position:absolute;top:0;left:0;}</style>", unsafe_allow_html=True)
 
-# --- 2. AUTOMATIC TIME INTERVAL REFRESH HARNESS ---
-st_autorefresh(interval=10000, key="quantum_core_global_refresh")
-
-# --- 3. LIVE PRICE & QUANT SIGNAL MATRIX PIPELINE ---
+# --- 2. LIVE PRICE & QUANT SIGNAL MATRIX PIPELINE ---
 def fetch_market_signals():
     try:
         res = requests.get("https://coinbase.com", timeout=4).json()
@@ -42,5 +38,5 @@ js_usa = json.dumps(usa_news)
 js_war = json.dumps(war_news)
 js_ai = json.dumps(ai_news)
 
-# --- 4. IMMUNE BASE64 VISUAL COMPOSITION LAYER ---
-# Encoded directly to string letters to bypass Python quote parsers permanently
+# --- 3. IMMUNE BASE64 VISUAL COMPOSITION LAYER ---
+# Includes native JavaScript page reloading to completely remove the need for external Python libraries
